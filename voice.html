@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Changer App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f9ff;
+        }
+        .voice-wave {
+            animation: wave 1s ease-in-out infinite;
+        }
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.5); }
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen p-4 md:p-8">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-sky-800">Voice Changer</h1>
+            <p class="text-sky-600 mt-2">Transform your voice in real-time</p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="max-w-md mx-auto bg-white rounded-xl shadow-lg p-6">
+            <!-- Call Status -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+                    <span class="ml-2 text-gray-600">Live Call</span>
+                </div>
+                <span id="timer" class="text-gray-600">00:00</span>
+            </div>
+
+            <!-- Voice Visualization -->
+            <div class="flex justify-center space-x-2 mb-8 h-20 items-center">
+                <div class="voice-wave w-2 h-12 bg-sky-500 rounded"></div>
+                <div class="voice-wave w-2 h-16 bg-sky-500 rounded" style="animation-delay: 0.1s"></div>
+                <div class="voice-wave w-2 h-20 bg-sky-500 rounded" style="animation-delay: 0.2s"></div>
+                <div class="voice-wave w-2 h-16 bg-sky-500 rounded" style="animation-delay: 0.3s"></div>
+                <div class="voice-wave w-2 h-12 bg-sky-500 rounded" style="animation-delay: 0.4s"></div>
+            </div>
+
+            <!-- Voice Effects -->
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <button onclick="changeVoice('robot')" class="effect-btn p-4 rounded-lg bg-sky-100 hover:bg-sky-200 transition-colors">
+                    <i class="bi bi-robot text-2xl text-sky-600"></i>
+                    <p class="mt-2 text-sm text-sky-800">Robot</p>
+                </button>
+                <button onclick="changeVoice('alien')" class="effect-btn p-4 rounded-lg bg-sky-100 hover:bg-sky-200 transition-colors">
+                    <i class="bi bi-stars text-2xl text-sky-600"></i>
+                    <p class="mt-2 text-sm text-sky-800">Alien</p>
+                </button>
+                <button onclick="changeVoice('deep')" class="effect-btn p-4 rounded-lg bg-sky-100 hover:bg-sky-200 transition-colors">
+                    <i class="bi bi-music-note-beamed text-2xl text-sky-600"></i>
+                    <p class="mt-2 text-sm text-sky-800">Deep</p>
+                </button>
+                <button onclick="changeVoice('helium')" class="effect-btn p-4 rounded-lg bg-sky-100 hover:bg-sky-200 transition-colors">
+                    <i class="bi bi-music-note text-2xl text-sky-600"></i>
+                    <p class="mt-2 text-sm text-sky-800">Helium</p>
+                </button>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex justify-center space-x-4">
+                <button id="muteBtn" onclick="toggleMute()" class="p-4 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                    <i class="bi bi-mic-fill text-xl text-gray-600"></i>
+                </button>
+                <button id="endCallBtn" onclick="endCall()" class="p-4 rounded-full bg-red-500 hover:bg-red-600 transition-colors">
+                    <i class="bi bi-telephone-x-fill text-xl text-white"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isMuted = false;
+        let currentEffect = null;
+        let timerInterval;
+        let seconds = 0;
+
+        // Initialize timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                seconds++;
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                document.getElementById('timer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // Start timer when page loads
+        startTimer();
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            const muteBtn = document.getElementById('muteBtn');
+            muteBtn.innerHTML = isMuted ? 
+                '<i class="bi bi-mic-mute-fill text-xl text-gray-600"></i>' : 
+                '<i class="bi bi-mic-fill text-xl text-gray-600"></i>';
+        }
+
+        function changeVoice(effect) {
+            currentEffect = effect;
+            // Remove active state from all buttons
+            document.querySelectorAll('.effect-btn').forEach(btn => {
+                btn.classList.remove('bg-sky-200');
+                btn.classList.add('bg-sky-100');
+            });
+            // Add active state to clicked button
+            event.currentTarget.classList.remove('bg-sky-100');
+            event.currentTarget.classList.add('bg-sky-200');
+        }
+
+        function endCall() {
+            clearInterval(timerInterval);
+            alert('Call ended');
+            // Reset timer
+            seconds = 0;
+            document.getElementById('timer').textContent = '00:00';
+            startTimer();
+        }
+    </script>
+</body>
+</html>
